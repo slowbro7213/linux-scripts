@@ -1,0 +1,18 @@
+[Unit]
+Description=Elasticsearch Service
+
+[Service]
+User=elasticsearch
+Group=elasticsearch
+
+LimitMEMLOCK=infinity
+LimitNOFILE=65536
+
+ExecStart=/home/elasticsearch/elasticsearch-6.8.15/bin/elasticsearch -p /home/elasticsearch/elasticsearch-6.8.15/pid
+ExecStartPost=/home/elasticsearch/cerebro-0.8.1/bin/cerebro
+ExecStopPre=/bin/bash -c "kill -SIGTERM $(jps | grep cerebro.cerebro-0.8.1-launcher.jar | awk '{print $1}')"
+ExecStop=/bin/bash -c 'kill -SIGTERM $(cat /home/elasticsearch/elasticsearch-6.8.15/pid)'
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
